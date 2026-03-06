@@ -20,7 +20,8 @@ interface MemberComplianceTableProps {
         direction: 'asc' | 'desc';
     };
     onSort: (key: 'name' | 'total') => void;
-    onMemberClick: (memberKey: string) => void;
+    onMemberClick?: (memberKey: string) => void;
+    readonly?: boolean;
 }
 
 export const MemberComplianceTable: React.FC<MemberComplianceTableProps> = ({
@@ -28,7 +29,8 @@ export const MemberComplianceTable: React.FC<MemberComplianceTableProps> = ({
     months,
     sortConfig,
     onSort,
-    onMemberClick
+    onMemberClick,
+    readonly = false
 }) => {
     return (
         <div className="w-full bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
@@ -56,17 +58,26 @@ export const MemberComplianceTable: React.FC<MemberComplianceTableProps> = ({
                                     {month}
                                 </th>
                             ))}
-                            <th
-                                onClick={() => onSort('total')}
-                                className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right cursor-pointer hover:text-blue-600 transition-colors"
-                            >
-                                <div className="flex items-center justify-end gap-1">
-                                    {sortConfig.key === 'total' && (
-                                        sortConfig.direction === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />
-                                    )}
-                                    Total
-                                </div>
-                            </th>
+                            {readonly && (
+                                <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
+                                    <div className="flex items-center justify-end gap-1">
+                                        Total
+                                    </div>
+                                </th>
+                            )}
+                            {!readonly && (
+                                <th
+                                    onClick={() => onSort('total')}
+                                    className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right cursor-pointer hover:text-blue-600 transition-colors"
+                                >
+                                    <div className="flex items-center justify-end gap-1">
+                                        {sortConfig.key === 'total' && (
+                                            sortConfig.direction === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />
+                                        )}
+                                        Total
+                                    </div>
+                                </th>
+                            )}
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
@@ -76,10 +87,16 @@ export const MemberComplianceTable: React.FC<MemberComplianceTableProps> = ({
                                 initial={{ opacity: 0, x: -10 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: idx * 0.05 }}
-                                onClick={() => onMemberClick(member.memberKey)}
-                                className="hover:bg-blue-50/50 transition-colors cursor-pointer group/row"
+                                onClick={() => !readonly && onMemberClick?.(member.memberKey)}
+                                className={cn(
+                                    "transition-colors border-b border-slate-50",
+                                    !readonly ? "hover:bg-blue-50/50 cursor-pointer group/row" : ""
+                                )}
                             >
-                                <td className="px-6 py-4 font-medium text-slate-900 sticky left-0 bg-white border-r border-slate-100 z-10 group-hover/row:bg-blue-50/50 transition-colors">
+                                <td className={cn(
+                                    "px-6 py-4 font-medium text-slate-900 sticky left-0 bg-white border-r border-slate-100 z-10 transition-colors",
+                                    !readonly && "group-hover/row:bg-blue-50/50"
+                                )}>
                                     <div className="flex items-center gap-2">
                                         {member.displayName}
                                     </div>
@@ -92,14 +109,16 @@ export const MemberComplianceTable: React.FC<MemberComplianceTableProps> = ({
                                             <div className="flex justify-center">
                                                 {isPaid ? (
                                                     <div className="group relative">
-                                                        <div className="flex items-center justify-center h-8 w-8 rounded-full bg-green-100 text-green-600 transition-transform group-hover:scale-110">
+                                                        <div className="flex items-center justify-center h-8 w-8 rounded-full bg-green-100 text-green-600 transition-transform hover:scale-110">
                                                             <Check size={16} />
                                                         </div>
-                                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-20">
-                                                            <div className="bg-slate-900 text-white text-[10px] px-2 py-1 rounded shadow-lg whitespace-nowrap">
-                                                                {formatCurrency(amount)}
+                                                        {!readonly && (
+                                                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-20">
+                                                                <div className="bg-slate-900 text-white text-[10px] px-2 py-1 rounded shadow-lg whitespace-nowrap">
+                                                                    {formatCurrency(amount)}
+                                                                </div>
                                                             </div>
-                                                        </div>
+                                                        )}
                                                     </div>
                                                 ) : (
                                                     <div className="flex items-center justify-center h-8 w-8 rounded-full bg-slate-100 text-slate-300">
@@ -110,14 +129,16 @@ export const MemberComplianceTable: React.FC<MemberComplianceTableProps> = ({
                                         </td>
                                     );
                                 })}
-                                <td className="px-6 py-4 text-right font-bold text-slate-900">
-                                    {formatCurrency(member.totalContribution)}
-                                </td>
+                                {!readonly && (
+                                    <td className="px-6 py-4 text-right font-bold text-slate-900">
+                                        {formatCurrency(member.totalContribution)}
+                                    </td>
+                                )}
                             </motion.tr>
                         ))}
                     </tbody>
                 </table>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };
