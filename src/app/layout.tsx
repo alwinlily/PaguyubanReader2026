@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 
 export const metadata: Metadata = {
-  title: "Sheet Reader | Community Contribution Monitoring",
+  title: "Mekar Sejahtera Sampurna Group",
   description: "Transparent financial monitoring for community committees and treasurers.",
 };
 

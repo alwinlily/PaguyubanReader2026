@@ -7,7 +7,7 @@ import { Transaction } from '@/lib/types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lock, ArrowRight, ShieldAlert } from 'lucide-react';
 
-const DASHBOARD_PASSWORD = '12345678';
+const DASHBOARD_PASSWORD = 'mekarsejahtera2026!';
 
 export default function Home() {
   const [data, setData] = useState<Transaction[]>([]);
